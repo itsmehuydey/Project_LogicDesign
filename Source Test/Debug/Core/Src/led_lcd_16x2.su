@@ -1,0 +1,2 @@
+led_lcd_16x2.c:14:6:LCD_InitializeAndDisplay	8	static
+led_lcd_16x2.c:27:6:LCD_DisplayTestSequence	8	static

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="refresh" content="4" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <title>ESP32 Sensor Data</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #ade1f5, #3783b4);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            font-size: 3.0rem;
+            margin-top: 20px;
+        }
+
+        p {
+            font-size: 3.0rem;
+            margin: 20px 0;
+        }
+
+        .units {
+            font-size: 1.2rem;
+        }
+
+        .dht-labels {
+            font-size: 1.5rem;
+            vertical-align: middle;
+            padding-bottom: 15px;
+        }
+
+        .weather-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            margin: 20px auto;
+            width: 60%;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .weather-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .weather-icon {
+            font-size: 60px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .weather-icon:hover {
+            transform: rotate(15deg);
+        }
+
+        #chart-container {
+            margin: 80px auto;
+            width: 90%;
+            height: 400px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Toggle Button Style */
+        .progress {
+            display: flex;
+            align-items: center;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .toggle-btn, .toggle-btn1 {
+            width: 50px;
+            height: 25px;
+            border-radius: 50px;
+            background-color: #ccc;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .toggle-btn.active, .toggle-btn1.active {
+            background-color: #4caf50;
+        }
+
+        .inner-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            position: absolute;
+            top: 2.5px;
+            left: 2.5px;
+            transition: left 0.3s;
+        }
+
+        .toggle-btn.active .inner-circle, .toggle-btn1.active .inner-circle {
+            left: 25px;
+        }
+
+        .icon1 {
+            margin-right: 20px;
+        }
+
+        /* Send Button Style */
+        .send-data-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .send-data-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="weather-card">
+    <h2>ESP32 Sensor Data</h2>
+    <p>
+        <i class="fas fa-thermometer-half weather-icon" style="color:#ca3517;"></i>
+        <span class="dht-labels">Temperature</span>
+        <span id="temperature"></span>
+        <sup class="units">&deg;C</sup>
+    </p>
+    <p>
+        <i class="fas fa-tint weather-icon" style="color:#00add6;"></i>
+        <span class="dht-labels">Humidity</span>
+        <span id="humidity"></span>
+        <sup class="units">&percnt;</sup>
+    </p>
+</div>
+
+<!-- New Toggle Button -->
+<div class="progress">
+    <a class="icon1">
+        <i class="fas fa-4x fa-bath"></i>
+    </a>
+    <div class="toggle-btn" id="unact">
+        <div class="inner-circle"></div>
+    </div>
+    <div class="toggle-btn active" id="act">
+        <div class="inner-circle"></div>
+    </div>
+</div>
+
+<div id="chart-container">
+    <canvas id="sensorChart"></canvas>
+</div>
+
+<button class="send-data-btn" id="sendDataBtn">Send Data</button>
+
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+    import { getDatabase, ref, onValue, set } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBzEwwlB59wdpjidWarAVjt2h3m3d7dqZ8",
+        authDomain: "aiot-bcb93.firebaseapp.com",
+        databaseURL: "https://aiot-bcb93-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "aiot-bcb93",
+        storageBucket: "aiot-bcb93.firebasestorage.app",
+        messagingSenderId: "435846609222",
+        appId: "1:435846609222:web:a8c1133549348665edcd47",
+        measurementId: "G-6PRQ0H1KNX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    const temperatureRef = ref(database, 'sensorData/temperature');
+    const humidityRef = ref(database, 'sensorData/humidity');
+    const buttonStateRef = ref(database, 'sensorData/buttonState');
+
+    const temperatureData = [];
+    const humidityData = [];
+    const timeLabels = [];
+
+    const ctx = document.getElementById('sensorChart').getContext('2d');
+    const sensorChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timeLabels,
+            datasets: [
+                {
+                    label: 'Temperature (°C)',
+                    data: temperatureData,
+                    borderColor: '#ca3517',
+                    backgroundColor: 'rgba(202, 53, 23, 0.2)',
+                    fill: true,
+                    tension: 0.3,
+                },
+                {
+                    label: 'Humidity (%)',
+                    data: humidityData,
+                    borderColor: '#00add6',
+                    backgroundColor: 'rgba(0, 173, 214, 0.2)',
+                    fill: true,
+                    tension: 0.3,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time',
+                        color: '#ffffff'
+                    },
+                    ticks: { color: '#ffffff' }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Values',
+                        color: '#ffffff'
+                    },
+                    ticks: { color: '#ffffff' }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { color: '#ffffff' }
+                }
+            }
+        }
+    });
+
+    onValue(temperatureRef, snapshot => {
+        if (snapshot.exists()) {
+            const temp = snapshot.val();
+            document.getElementById('temperature').innerText = temp;
+            updateChart(temp, null);
+        }
+    });
+
+    onValue(humidityRef, snapshot => {
+        if (snapshot.exists()) {
+            const hum = snapshot.val();
+            document.getElementById('humidity').innerText = hum;
+            updateChart(null, hum);
+        }
+    });
+
+    function updateChart(temp, hum) {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        if (temp !== null) {
+            temperatureData.push(temp);
+        }
+        if (hum !== null) {
+            humidityData.push(hum);
+        }
+        if (temperatureData.length > 20) {
+            temperatureData.shift();
+        }
+        if (humidityData.length > 20) {
+            humidityData.shift();
+        }
+        if (timeLabels.length > 20) {
+            timeLabels.shift();
+        }
+        timeLabels.push(timeString);
+        sensorChart.update();
+    }
+
+    // Toggle button functionality
+    const toggleBtn = document.getElementById('unact');
+    const toggleBtnActive = document.getElementById('act');
+
+    toggleBtn.addEventListener('click', function () {
+        toggleBtn.classList.toggle('active');
+        toggleBtnActive.classList.toggle('active');
+
+        // Update Firebase with the new button state
+        const newState = toggleBtn.classList.contains('active') ? 'ON' : 'OFF';
+        set(buttonStateRef, { state: newState }).then(() => {
+            console.log('Button state updated to:', newState);
+        }).catch(error => {
+            console.error('Error updating button state:', error);
+        });
+    });
+
+    // Send Data Button Functionality
+    const sendDataBtn = document.getElementById('sendDataBtn');
+    sendDataBtn.addEventListener('click', function () {
+        const temp = document.getElementById('temperature').innerText;
+        const hum = document.getElementById('humidity').innerText;
+        const buttonState = document.querySelector('#unact').classList.contains('active') ? 'ON' : 'OFF';
+
+        set(ref(database, 'userAction/'), {
+            temperature: temp,
+            humidity: hum,
+            buttonState: buttonState,
+            timestamp: new Date().toISOString()
+        }).then(() => {
+            alert('Data sent successfully!');
+        }).catch(error => {
+            console.error('Error sending data:', error);
+        });
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
