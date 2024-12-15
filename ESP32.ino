@@ -117,30 +117,6 @@ void setup() {
     pinMode(INPUT_ADC, INPUT);
 }
 
-// void loop() {
-//     // Đọc giá trị cảm biến ánh sáng
-//     int sensorValue = analogRead(INPUT_ADC);
-//     digitalWrite(OUTPUT_ADC, sensorValue < 900 ? HIGH : LOW);
-
-//     // Đọc dữ liệu từ STM32 qua UART2
-//     readSensorData();
-
-//     // Gửi dữ liệu nhiệt độ và độ ẩm lên Firebase
-//     if (Firebase.setFloat(fbdo, "/sensorData/temperature", temperature)) {
-//         Serial.println("Temperature sent successfully");
-//     } else {
-//         Serial.print("Error sending temperature: ");
-//         Serial.println(fbdo.errorReason());
-//     }
-
-//     if (Firebase.setFloat(fbdo, "/sensorData/humidity", humidity)) {
-//         Serial.println("Humidity sent successfully");
-//     } else {
-//         Serial.print("Error sending humidity: ");
-//         Serial.println(fbdo.errorReason());
-//     }
-// }
-
     
 void loop() {
     // Đọc giá trị cảm biến ánh sáng
