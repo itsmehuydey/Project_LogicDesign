@@ -7,11 +7,11 @@
 
 // WiFi và Firebase cấu hình
 #define WIFI_SSID "iPhone"
-#define WIFI_PASSWORD "777888111000"
+#define WIFI_PASSWORD "777********"
 #define API_KEY "AIzaSyBDgWra86uFe0ma4fZlYewS9JEiHmYQN0A"
 #define DATABASE_URL "aiot-bcb93-default-rtdb.asia-southeast1.firebasedatabase.app"
-#define USER_EMAIL "huyt24309@gmail.com"
-#define USER_PASSWORD "huy2004.."
+#define USER_EMAIL "*********@gmail.com"
+#define USER_PASSWORD "*********"
 
 // GPIO cấu hình
 #define LED_PIN D13
