@@ -163,40 +163,13 @@ uint8_t SCH_Delete_Task(uint32_t deltaskID){
 	return 1;
 }
 
-// Đang hơi xung đột kiểu DỮ LIỆU stdint với unsigned -> nên dùng một cái thôi
-// Chỉnh sửa lại Update với Add để cho nó O(1) nhưng mà xoá thêm liên tục nó bị chậm :))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Chỉnh sửa lại Update với Add để cho nó O(1) :))
 
 /////////////////////////////////////////////////////////////////
 uint8_t Error_code_G = 0;
 uint8_t Last_error_code_G = 0;
 uint32_t Error_tick_count_G = 0;
-
-
-// Hàm báo cáo trạng thái lỗi
+// Hàm báo cáo trạng thái lỗi, có thể dùng nếu muốn, ở đồ án này chúng em không dùng đến
 /*void SCH_Report_Status(void) {
 #ifdef SCH_REPORT_ERRORS
     // Kiểm tra nếu có mã lỗi mới
