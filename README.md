@@ -1,5 +1,5 @@
 # Project_LogicDesign STM32 & ESP32
-# Hệ thống thu thập và hiển thị dữ liệu cảm biến trên
+# Hệ thống thu thập và hiển thị dữ liệu cảm biến
 ## 1. Mục tiêu dự án  
 Dự án nhằm phát triển **device driver** để giao tiếp giữa vi điều khiển STM32 và các module ngoại vi, bao gồm:  
 - **Cảm biến DHT20**: Đo nhiệt độ và độ ẩm.  
