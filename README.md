@@ -1,5 +1,5 @@
 # Project_LogicDesign STM32 & ESP32
-# Hệ thống thu thập và hiển thị dữ liệu cảm biến trên STM32  
+# Hệ thống thu thập và hiển thị dữ liệu cảm biến trên
 ## 1. Mục tiêu dự án  
 Dự án nhằm phát triển **device driver** để giao tiếp giữa vi điều khiển STM32 và các module ngoại vi, bao gồm:  
 - **Cảm biến DHT20**: Đo nhiệt độ và độ ẩm.  
@@ -41,9 +41,10 @@ Hệ thống hỗ trợ:
 
 #### **3. LED RGB**  
 - **Mục tiêu**: Biểu thị trạng thái hệ thống bằng màu sắc.  
-- **Thực hiện**:  
-  1. Kết nối LED RGB với ESP32 qua PWM
-  2. Phát triển driver điều khiển LED RGB để thay đổi màu sắc tùy thuộc vào ngưỡng:  
+- **Thực hiện**:
+  1. Kết nối esp32 trên Yolo Uno qua UART
+  2. Kết nối LED RGB với ESP32 qua PWM
+  3. Phát triển driver điều khiển LED RGB để thay đổi màu sắc tùy thuộc vào ngưỡng:  
      - Xanh, Vàng: Bình thường.  
      - Đỏ: Nhiệt độ ngoài ngưỡng.  
 
