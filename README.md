@@ -68,7 +68,7 @@ Hệ thống hỗ trợ:
   - Quản lý môi trường, giám sát nhà thông minh.  
 
 ## 4. Ghi chú  
-- Đảm bảo các driver được phát triển tương thích với Nucleo-F103RB & YOLO UNOUNO  
+- Đảm bảo các driver được phát triển tương thích với Nucleo-F103RB & YOLO UNO
 - Kiểm tra kết nối phần cứng trước khi chạy.  
 - Cập nhật đầy đủ các thư viện và phần mềm liên quan.  
 
