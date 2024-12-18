@@ -1,5 +1,10 @@
 # Project_LogicDesign STM32 & ESP32
 # Hệ thống thu thập và hiển thị dữ liệu cảm biến
+Link video Demo: https://youtu.be/4NJtgLagVZU?si=HRSeX8eGx7fTpqJ5
+
+Link mã nguồn: https://github.com/itsmehuydey/Project_LogicDesign/tree/main
+
+Link Slide thuyết trình: https://www.canva.com/design/DAGZJh5CXRQ/r7WgMcvF1cuFDEJRqAeiOg/edit?utm_content=DAGZJh5CXRQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 ## 1. Mục tiêu dự án  
 Dự án nhằm phát triển **device driver** để giao tiếp giữa vi điều khiển STM32 và các module ngoại vi, bao gồm:  
 - **Cảm biến DHT20**: Đo nhiệt độ và độ ẩm.  
